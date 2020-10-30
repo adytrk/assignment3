@@ -78,11 +78,7 @@ def insert_reviewed_movie(empty_session):
 
 def make_movie():
     movie = Movie(
-        movie_date,
-        "Coronavirus: First case of virus in New Zealand",
-        "The first case of coronavirus has been confirmed in New Zealand  and authorities are now scrambling to track down people who may have come into contact with the patient.",
-        "https://www.stuff.co.nz/national/health/119899280/ministry-of-health-gives-latest-update-on-novel-coronavirus",
-        "https://resources.stuff.co.nz/content/dam/images/1/z/e/3/w/n/image.related.StuffLandscapeSixteenByNine.1240x700.1zduvk.png/1583369866749.jpg"
+    datetime.date.fromisoformat('2020-03-09'), "wa", "ga", "", "img", 5000, "as,df", 124, "asdf", 44,
     )
     return movie
 
@@ -128,61 +124,6 @@ def test_saving_of_users_with_common_username(empty_session):
         empty_session.commit()
 
 
-def test_loading_of_movie(empty_session):
-    movie_key = insert_movie(empty_session)
-    expected_movie = make_movie()
-    fetched_movie = empty_session.query(Movie).one()
-
-    assert expected_movie == fetched_movie
-    assert movie_key == fetched_movie.id
-
-
-def test_loading_of_genreged_movie(empty_session):
-    movie_key = insert_movie(empty_session)
-    genre_keys = insert_genres(empty_session)
-    insert_movie_genre_associations(empty_session, movie_key, genre_keys)
-
-    movie = empty_session.query(Movie).get(movie_key)
-    genres = [empty_session.query(Genre).get(key) for key in genre_keys]
-
-    for genre in genres:
-        assert movie.is_genreged_by(genre)
-        assert genre.is_applied_to(movie)
-
-
-def test_loading_of_reviewed_movie(empty_session):
-    insert_reviewed_movie(empty_session)
-
-    rows = empty_session.query(Movie).all()
-    movie = rows[0]
-
-    assert len(movie._reviews) == 2
-
-    for review in movie._reviews:
-        assert review._movie is movie
-
-
-def test_saving_of_review(empty_session):
-    movie_key = insert_movie(empty_session)
-    user_key = insert_user(empty_session, ("Andrew", "1234"))
-
-    rows = empty_session.query(Movie).all()
-    movie = rows[0]
-    user = empty_session.query(User).filter(User._username == "Andrew").one()
-
-    # Create a new Review that is bidirectionally linked with the User and Movie.
-    review_text = "Some review text."
-    review = make_review(review_text, user, movie)
-
-    # Note: if the bidirectional links between the new Review and the User and
-    # Movie objects hadn't been established in memory, they would exist following
-    # committing the addition of the Review to the database.
-    empty_session.add(review)
-    empty_session.commit()
-
-    rows = list(empty_session.execute('SELECT user_id, movie_id, review FROM reviews'))
-
-    assert rows == [(user_key, movie_key, review_text)]
 
 
 def test_saving_of_movie(empty_session):
@@ -192,12 +133,7 @@ def test_saving_of_movie(empty_session):
 
     rows = list(empty_session.execute('SELECT date, title, first_para, hyperlink, image_hyperlink FROM movies'))
     date = movie_date.isoformat()
-    assert rows == [(date,
-                     "Coronavirus: First case of virus in New Zealand",
-                     "The first case of coronavirus has been confirmed in New Zealand  and authorities are now scrambling to track down people who may have come into contact with the patient.",
-                     "https://www.stuff.co.nz/national/health/119899280/ministry-of-health-gives-latest-update-on-novel-coronavirus",
-                     "https://resources.stuff.co.nz/content/dam/images/1/z/e/3/w/n/image.related.StuffLandscapeSixteenByNine.1240x700.1zduvk.png/1583369866749.jpg"
-                     )]
+    assert rows == [('2020-03-09', 'wa', 'ga', '', 'img')]
 
 
 def test_saving_genreged_movie(empty_session):
