@@ -103,32 +103,10 @@ def test_review_with_invalid_input(client, auth, review, messages):
         assert message in response.data
 
 
-def test_movies_without_date(client):
-    # Check that we can retrieve the movies page.
-    response = client.get('/movies_by_date')
-    assert response.status_code == 200
-
-    # Check that without providing a date query parameter the page includes the first movie.
-    assert b'head' in response.data
-    assert b'head' in response.data
-
-
-def test_movies_with_date(client):
-    # Check that we can retrieve the movies page.
-    response = client.get('/movies_by_date?date=2020-02-29')
-    assert response.status_code == 302
-
-
 
 def test_movies_with_review(client):
     # Check that we can retrieve the movies page.
     response = client.get('/movies_by_date?date=2020-02-28&view_reviews_for=1')
     assert response.status_code == 302
 
-
-
-def test_movies_with_genre(client):
-    # Check that we can retrieve the movies page.
-    response = client.get('/movies_by_genre?genre=Health')
-    assert response.status_code == 200
 
