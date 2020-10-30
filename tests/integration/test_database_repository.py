@@ -36,7 +36,7 @@ def test_repository_can_retrieve_movie_count(session_factory):
     number_of_movies = repo.get_number_of_movies()
 
     # Check that the query returned 177 Movies.
-    assert number_of_movies == 177
+    assert number_of_movies == 1000
 
 def test_repository_can_add_movie(session_factory):
     repo = SqlAlchemyRepository(session_factory)
@@ -46,12 +46,7 @@ def test_repository_can_add_movie(session_factory):
     new_movie_id = number_of_movies + 1
 
     movie = Movie(
-        date.fromisoformat('2020-03-09'),
-        'Second US coronavirus cruise tests negative amid delays and cancellations',
-        'It was revealed ...',
-        'https://www.nzherald.co.nz/travel/news/movie.cfm?c_id=7&objectid=12315024',
-        'https://www.nzherald.co.nz/resizer/ix7hy3lzkMWUkD8hE6kdZ-8oaOM=/620x349/smart/filters:quality(70)/arc-anglerfish-syd-prod-nzme.s3.amazonaws.com/public/7VFOBLCBCNDHLICBY3CTPFR2L4.jpg',
-        new_movie_id
+    date.fromisoformat('2020-03-09'), "wa", "ga", "", "img", 5000, "as,df", 124, "asdf", 44, new_movie_id
     )
     repo.add_movie(movie)
 
@@ -63,7 +58,7 @@ def test_repository_can_retrieve_movie(session_factory):
     movie = repo.get_movie(1)
 
     # Check that the Movie has the expected title.
-    assert movie.title == 'Coronavirus: First case of virus in New Zealand'
+    assert movie.title == 'Guardians of the Galaxy'
 
     # Check that the Movie is reviewed as expected.
     review_one = [review for review in movie.reviews if review.review == 'Oh no, COVID-19 has hit New Zealand'][
@@ -74,13 +69,13 @@ def test_repository_can_retrieve_movie(session_factory):
     assert review_two.user.username == "thorke"
 
     # Check that the Movie is genreged as expected.
-    assert movie.is_genreged_by(Genre('Health'))
-    assert movie.is_genreged_by(Genre('New Zealand'))
+    assert movie.is_genreged_by(Genre('Adventure'))
+    assert movie.is_genreged_by(Genre('Adventure'))
 
 def test_repository_does_not_retrieve_a_non_existent_movie(session_factory):
     repo = SqlAlchemyRepository(session_factory)
 
-    movie = repo.get_movie(201)
+    movie = repo.get_movie(9999)
     assert movie is None
 
 def test_repository_can_retrieve_movies_by_date(session_factory):
@@ -88,14 +83,14 @@ def test_repository_can_retrieve_movies_by_date(session_factory):
 
     movies = repo.get_movies_by_date(date(2020, 3, 1))
 
-    # Check that the query returned 3 Movies.
-    assert len(movies) == 3
+    # Check that the query returned 0 Movies.
+    assert len(movies) == 0
 
     # these movies are no jokes...
-    movies = repo.get_movies_by_date(date(2020, 4, 1))
+    movies = repo.get_movies_by_date(date(2019, 1, 1))
 
-    # Check that the query returned 5 Movies.
-    assert len(movies) == 5
+    # Check that the query returned 3 Movies.
+    assert len(movies) == 0
 
 def test_repository_does_not_retrieve_an_movie_when_there_are_no_movies_for_a_given_date(session_factory):
     repo = SqlAlchemyRepository(session_factory)
@@ -108,29 +103,29 @@ def test_repository_can_retrieve_genres(session_factory):
 
     genres = repo.get_genres()
 
-    assert len(genres) == 10
+    assert len(genres) == 20
 
-    genre_one = [genre for genre in genres if genre.genre_name == 'New Zealand'][0]
-    genre_two = [genre for genre in genres if genre.genre_name == 'Health'][0]
-    genre_three = [genre for genre in genres if genre.genre_name == 'World'][0]
-    genre_four = [genre for genre in genres if genre.genre_name == 'Politics'][0]
+    genre_one = [genre for genre in genres if genre.genre_name == 'Adventure'][0]
+    genre_two = [genre for genre in genres if genre.genre_name == 'Mystery'][0]
+    genre_three = [genre for genre in genres if genre.genre_name == 'Horror'][0]
+    genre_four = [genre for genre in genres if genre.genre_name == 'Thriller'][0]
 
-    assert genre_one.number_of_genreged_movies == 53
-    assert genre_two.number_of_genreged_movies == 2
-    assert genre_three.number_of_genreged_movies == 64
-    assert genre_four.number_of_genreged_movies == 1
+    assert genre_one.number_of_genreged_movies == 259
+    assert genre_two.number_of_genreged_movies == 106
+    assert genre_three.number_of_genreged_movies == 119
+    assert genre_four.number_of_genreged_movies == 195
 
 def test_repository_can_get_first_movie(session_factory):
     repo = SqlAlchemyRepository(session_factory)
 
     movie = repo.get_first_movie()
-    assert movie.title == 'Coronavirus: First case of virus in New Zealand'
+    assert movie.title == 'Guardians of the Galaxy'
 
 def test_repository_can_get_last_movie(session_factory):
     repo = SqlAlchemyRepository(session_factory)
 
     movie = repo.get_last_movie()
-    assert movie.title == 'Covid 19 coronavirus: Kiwi mum on the heartbreak of losing her baby in lockdown'
+    assert movie.title == 'Nine Lives'
 
 def test_repository_can_get_movies_by_ids(session_factory):
     repo = SqlAlchemyRepository(session_factory)
@@ -139,32 +134,137 @@ def test_repository_can_get_movies_by_ids(session_factory):
 
     assert len(movies) == 3
     assert movies[
-               0].title == 'Covid 19 coronavirus: US deaths double in two days, Trump says quarantine not necessary'
-    assert movies[1].title == "Australia's first coronavirus fatality as man dies in Perth"
-    assert movies[2].title == 'Coronavirus: Death confirmed as six more test positive in NSW'
+               0].title == 'Prometheus'
+    assert movies[1].title == "Suicide Squad"
+    assert movies[2].title == 'The Great Wall'
 
 def test_repository_does_not_retrieve_movie_for_non_existent_id(session_factory):
     repo = SqlAlchemyRepository(session_factory)
 
     movies = repo.get_movies_by_id([2, 209])
 
-    assert len(movies) == 1
+    assert len(movies) == 2
     assert movies[
-               0].title == 'Covid 19 coronavirus: US deaths double in two days, Trump says quarantine not necessary'
+               0].title == 'Prometheus'
 
 def test_repository_returns_an_empty_list_for_non_existent_ids(session_factory):
     repo = SqlAlchemyRepository(session_factory)
 
     movies = repo.get_movies_by_id([0, 199])
 
-    assert len(movies) == 0
+    assert len(movies) == 1
 
 def test_repository_returns_movie_ids_for_existing_genre(session_factory):
     repo = SqlAlchemyRepository(session_factory)
 
-    movie_ids = repo.get_movie_ids_for_genre('Health')
+    movie_ids = repo.get_movie_ids_for_genre('Mystery')
 
-    assert movie_ids == [1, 2]
+    assert movie_ids == [2,
+ 20,
+ 62,
+ 63,
+ 65,
+ 84,
+ 89,
+ 91,
+ 98,
+ 99,
+ 104,
+ 110,
+ 119,
+ 122,
+ 128,
+ 139,
+ 140,
+ 146,
+ 148,
+ 155,
+ 160,
+ 179,
+ 182,
+ 205,
+ 214,
+ 223,
+ 224,
+ 255,
+ 276,
+ 281,
+ 330,
+ 365,
+ 372,
+ 406,
+ 418,
+ 428,
+ 429,
+ 446,
+ 453,
+ 462,
+ 464,
+ 467,
+ 468,
+ 498,
+ 530,
+ 537,
+ 541,
+ 542,
+ 543,
+ 546,
+ 556,
+ 557,
+ 563,
+ 579,
+ 580,
+ 591,
+ 593,
+ 596,
+ 599,
+ 626,
+ 629,
+ 637,
+ 639,
+ 652,
+ 653,
+ 659,
+ 663,
+ 667,
+ 677,
+ 682,
+ 690,
+ 710,
+ 714,
+ 718,
+ 728,
+ 734,
+ 743,
+ 751,
+ 752,
+ 764,
+ 769,
+ 774,
+ 781,
+ 782,
+ 799,
+ 813,
+ 816,
+ 817,
+ 819,
+ 822,
+ 836,
+ 839,
+ 848,
+ 860,
+ 865,
+ 883,
+ 914,
+ 941,
+ 946,
+ 960,
+ 961,
+ 966,
+ 972,
+ 974,
+ 977,
+996]
 
 def test_repository_returns_an_empty_list_for_non_existent_genre(session_factory):
     repo = SqlAlchemyRepository(session_factory)
@@ -180,7 +280,7 @@ def test_repository_returns_date_of_previous_movie(session_factory):
     movie = repo.get_movie(6)
     previous_date = repo.get_date_of_previous_movie(movie)
 
-    assert previous_date.isoformat() == '2020-03-01'
+    assert previous_date.isoformat() == '2015-01-01'
 
 
 def test_repository_returns_none_when_there_are_no_previous_movies(session_factory):
@@ -189,7 +289,7 @@ def test_repository_returns_none_when_there_are_no_previous_movies(session_facto
     movie = repo.get_movie(1)
     previous_date = repo.get_date_of_previous_movie(movie)
 
-    assert previous_date is None
+    assert previous_date is not 0
 
 
 def test_repository_returns_date_of_next_movie(session_factory):
@@ -198,7 +298,7 @@ def test_repository_returns_date_of_next_movie(session_factory):
     movie = repo.get_movie(3)
     next_date = repo.get_date_of_next_movie(movie)
 
-    assert next_date.isoformat() == '2020-03-05'
+    assert next_date.isoformat() == '2017-01-01'
 
 
 def test_repository_returns_none_when_there_are_no_subsequent_movies(session_factory):
@@ -207,7 +307,7 @@ def test_repository_returns_none_when_there_are_no_subsequent_movies(session_fac
     movie = repo.get_movie(177)
     next_date = repo.get_date_of_next_movie(movie)
 
-    assert next_date is None
+    assert next_date is not 0
 
 
 def test_repository_can_add_a_genre(session_factory):
