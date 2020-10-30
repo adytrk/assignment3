@@ -1,0 +1,25 @@
+<aside id="sidebar">
+
+    <header>
+        <h1 style="font-family: Comic Sans MS; color: white;">Top 3 Movies</h1>
+        <br>
+    </header>
+
+    <hr>
+    {% for movie in selected_movies %}
+        <div id="movie-container">
+            <a href="{{ movie.hyperlink }}" >
+                <img src={{ movie.image_hyperlink }} class="img-small">
+            </a>
+            <div style="padding-left: 10px; font-family: Arial ;"id="movie-description">
+                           <h2 style="font-family: Comic Sans MS; margin-bottom: 10px;">{{movie.id}}. {{movie.title}} <span style="color: white">({{movie.date.year}})</span></h2>
+                <p style="float:left;">Directed by <span style="color: #white">{{movie.director}}</span></p><br>
+            <p style="float:left;">Starring <span style="color: #white">{{movie.actors}}</span></p>
+            <br>
+            <div>
+            <p style="float:left;"><span style="color: #white">{{movie.time}} </span>Minutes Long, <span style="color: #white">{{movie.rating}} </span>/ 10 Rating </p>
+            </div>
+            </div>
+        </div>
+    {% endfor %}
+</aside>

@@ -1,0 +1,52 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+
+<main id="main">
+    <div id="revdiv">
+    <header>
+        <h1>{{date}}</h1>
+    </header>
+
+    <div style="clear:both">
+        <a href="{{movie.hyperlink}}" target="_blank">
+            <img src={{movie.image_hyperlink}} alt="movie image">
+        </a>
+            <h2 style="font-family: Comic Sans MS; margin-bottom: 10px;">{{movie.title}} <span style="color: #adadad">({{movie.date.year}})</span></h2>
+            <p style="float:left;">Directed by <span style="color: #757575">{{movie.director}}</span></p><br>
+            <p style="float:left;">Starring <span style="color: #757575">{{movie.actors}}</span></p>
+            <br>
+            <p style="float:left;"><span style="color: #757575">{{movie.time}} </span>Hours Long, <span style="color: #757575">{{movie.rating}} </span> Rating </p> <br>
+        <div style="float:left">
+            {% for genre in movie.genres %}
+            <button class="btn-general-disabled" disable>{{ genre.name }}</button>
+            {% endfor %}
+        </div>
+        <br>
+        <div class="form-wrapper">
+            <form action="{{handler_url}}" method="post">
+                {{form.movie_id}} <!-- Need to include this hidden field as it tracks the movie being reviewed. -->
+                {{form.csrf_token}} <!-- Need to include this token - Flask WTForms requires it. -->
+                <br>
+                <div class ="form-field">{{form.review.label}} </br>{{form.review(size = 100, placeholder="Type your review here..", class="textarea", cols="50", rows="6", wrap="hard")}}
+                    {% if form.review.errors %}
+                        <ul class="errors">
+        	            {% for error in form.review.errors %}
+        		            <li>{{error}}</li>
+                        {% endfor %}
+                        </ul>
+                    {% endif %}
+                </div>
+                {{ form.submit }}
+            </form>
+        </div>
+        <h2 style="font-family: Comic Sans MS; margin-bottom: 10px;">Previous Comments:</h2>
+        <div style="clear:both">
+            {% for review in movie.reviews %}
+                <p>{{review.review_text}}, by {{review.username}}, {{review.timestamp}}</p>
+            {% endfor %}
+        </div>
+    </movie>
+        </div>
+</main>
+{% endblock %}

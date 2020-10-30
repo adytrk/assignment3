@@ -1,0 +1,124 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+
+<main id="main">
+    <div class="allmoviescontainer">
+    <header id="movie-header">
+        <h1>{{ movies_title }}</h1>
+    </header>
+
+    <nav style="clear:both">
+            <div style="float:left">
+                {% if first_movie_url is not none %}
+                    <button class="btn-general" onclick="location.href='{{first_movie_url}}'">First</button>
+                {% else %}
+                    <button class="btn-general-disabled" disabled>First</button>
+                {% endif %}
+                {% if prev_movie_url is not none %}
+                    <button class="btn-general" onclick="location.href='{{prev_movie_url}}'"> << </button>
+                {% else %}
+                    <button class="btn-general-disabled" disabled> << </button>
+                {% endif %}
+            </div>
+            <div style="float:right">
+                {% if next_movie_url is not none %}
+                    <button class="btn-general" onclick="location.href='{{next_movie_url}}'"> >> </button>
+                {% else %}
+                    <button class="btn-general-disabled" disabled> >> </button>
+                {% endif %}
+                {% if last_movie_url is not none %}
+                    <button class="btn-general" onclick="location.href='{{last_movie_url}}'">Last</button>
+                {% else %}
+                    <button class="btn-general-disabled" disabled>Last</button>
+                {% endif %}
+            </div>
+        </nav>
+        <br>
+
+        <div class="allmovies">
+    {% for movie in movies %}
+    <movie id="movie">
+        <div class="movie-img">
+        <a href="{{movie.hyperlink}}" target="_blank">
+            <img src={{movie.image_hyperlink}} alt="movie image">
+        </a>
+        </div>
+        <div class="movie-txt">
+            <h2 style="font-family: Comic Sans MS; margin-bottom: 10px;">{{movie.title}} <span style="color: #adadad">({{movie.date.year}})</span></h2>
+            <p style="float:left;">Directed by <span style="color: #757575">{{movie.director}}</span></p><br>
+            <p style="float:left;">Starring <span style="color: #757575">{{movie.actors}}</span></p>
+            <br>
+            <div>
+            <p style="float:left;"><span style="color: #757575">{{movie.time}} </span>Minutes Long, <span style="color: #757575">{{movie.rating}} </span>/ 10 Rating </p>
+            </div>
+                <br >
+            <p style="float:left;">{{movie.first_para}}</p>
+            <div style="float:left;">
+            {% for genre in movie.genres %}
+            <button class="btn-general" onclick="location.href='{{ genre_urls[genre.name] }}'">{{ genre.name }}</button>
+            {% endfor %}
+        </div>
+        <div style="float: right;">
+            {% if movie.reviews|length > 0 and movie.id != show_reviews_for_movie %}
+                <button class="btn-general" onclick="location.href='{{ movie.view_review_url }}'">{{ movie.reviews|length }} reviews</button>
+            {% endif %}
+            <button class="btn-general" onclick="location.href='{{ movie.add_review_url }}'">Review</button>
+        </div>
+
+        {% if movie.id == show_reviews_for_movie %}
+
+
+        <div class="reviews" style="clear:both">
+            {% for review in movie.reviews %}
+                <p>{{review.review_text}}, by {{review.username}}, {{review.timestamp}}</p>
+            {% endfor %}
+        </div>
+
+        {% endif %}
+
+
+
+
+
+
+
+        </div>
+
+
+    </movie>
+    {% endfor %}
+
+    </div>
+
+    <footer>
+        <nav style="clear:both">
+            <div style="float:left">
+                {% if first_movie_url is not none %}
+                    <button class="btn-general" onclick="location.href='{{first_movie_url}}'">First</button>
+                {% else %}
+                    <button class="btn-general-disabled" disabled>First</button>
+                {% endif %}
+                {% if prev_movie_url is not none %}
+                    <button class="btn-general" onclick="location.href='{{prev_movie_url}}'"> << </button>
+                {% else %}
+                    <button class="btn-general-disabled" disabled>Previous</button>
+                {% endif %}
+            </div>
+            <div style="float:right">
+                {% if next_movie_url is not none %}
+                    <button class="btn-general" onclick="location.href='{{next_movie_url}}'"> >> </button>
+                {% else %}
+                    <button class="btn-general-disabled" disabled> >> </button>
+                {% endif %}
+                {% if last_movie_url is not none %}
+                    <button class="btn-general" onclick="location.href='{{last_movie_url}}'"> Last </button>
+                {% else %}
+                    <button class="btn-general-disabled" disabled> << </button>
+                {% endif %}
+            </div>
+        </nav>
+    </footer>
+        </div>
+</main>
+{% endblock %}

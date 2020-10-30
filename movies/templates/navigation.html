@@ -1,0 +1,47 @@
+<nav id="nav">
+  <i id="logo" class="fa fa-file-video fa-2x"> </i>
+  <h1>235movies.com</h1>
+
+  <div class="topnav">
+
+
+
+
+      <div class="dropdown">
+      <i class="dropbtn fa fa-user"></i>
+      <div class="dropdown-content">
+        {% if 'username' not in session %}
+        <a class="btn-nav" href="{{ url_for('authentication_bp.register') }}">Register</a>
+        <a class="btn-nav" href="{{ url_for('authentication_bp.login') }}">Login</a>
+        {% endif %}
+        {% if 'username' in session %}
+        <a class="btn-nav"> Hello, {{ session['username'] }}</a>
+        <a class="btn-nav" href="{{ url_for('authentication_bp.logout') }}">Logout</a>
+        {% endif %}
+      </div>
+    </div>
+<form>
+    <button type="submit"><i class="fa fa-search"></i></button>
+      <input type="text" placeholder="Search by Movies, Actors, Directors..">
+
+      </form>
+
+<a class="btn-nav" href="{{ url_for('home_bp.home') }}">Home</a>
+  <a class="btn-nav" href="{{ url_for('news_bp.movies_by_date') }}">
+        Browse All
+      </a>
+
+      <div class="dropdown-a">
+        <div id="gen" class="btn-nav">Genres </div>
+      <div class="dropdown-content-a">
+    {% for key in genre_urls %}
+      <a class="btn-nav" href="{{ genre_urls[key] }}">{{ key }}</a>
+    {% endfor %}
+      </div>
+    </div>
+
+  </div>
+
+
+
+</nav>
